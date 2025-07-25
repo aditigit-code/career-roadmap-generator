@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Career Roadmap Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.7/dist/full.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-base-200 text-base-content">
+
+  <div class="max-w-3xl mx-auto py-10 px-5">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Career Roadmap Generator</h1>
+      <!-- 🌙 Visually Appealing Theme Toggle -->
+      <label class="swap swap-rotate scale-125">
+        <input type="checkbox" class="theme-controller" value="light" />
+
+        <!-- Sun Icon -->
+        <svg class="swap-on fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M5 12a7 7 0 1114 0 7 7 0 01-14 0zm7-9v2m0 16v2m9-9h-2M4 12H2m15.536 6.364l-1.414-1.414M6.464 6.464L5.05 5.05m12.728-1.414l-1.414 1.414M6.464 17.536l-1.414 1.414"/>
+        </svg>
+
+        <!-- Moon Icon -->
+        <svg class="swap-off fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+      </label>
+    </div>
+
+    <!-- The rest of your form remains unchanged -->
+    <!-- ⬇️ FORM SECTION -->
+    <form id="roadmapForm">
+      <input name="name" type="text" placeholder="Your Name" class="input input-bordered w-full mb-4" required />
+
+      <!-- College -->
+      <select id="collegeSelect" name="college" class="select select-bordered w-full mb-2" required>
+        <option disabled selected>Select College</option>
+        <option>DIT University</option>
+        <option>IIT Bombay</option>
+        <option>IIT Delhi</option>
+        <option>IIT Kharagpur</option>
+        <option>IIIT Hyderabad</option>
+        <option>NIT Trichy</option>
+        <option>VIT Vellore</option>
+        <option>SRM University</option>
+        <option>Jadavpur University</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="collegeOther" name="collegeOther" placeholder="Enter your college" class="input input-bordered w-full mb-4 hidden" />
+
+      <!-- Degree -->
+      <select id="degreeSelect" name="degree" class="select select-bordered w-full mb-2" required>
+        <option disabled selected>Select Degree</option>
+        <option>B.Tech</option>
+        <option>M.Tech</option>
+        <option>MBA</option>
+        <option>BSc</option>
+        <option>MSc</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="degreeOther" name="degreeOther" placeholder="Enter your degree" class="input input-bordered w-full mb-4 hidden" />
+
+      <!-- Domain -->
+      <select id="domainSelect" name="domain" class="select select-bordered w-full mb-2" required>
+        <option disabled selected>Select Domain</option>
+        <option>CSE</option>
+        <option>ECE</option>
+        <option>IT</option>
+        <option>Mechanical</option>
+        <option>Finance</option>
+        <option>Marketing</option>
+        <option>Other</option>
+      </select>
+      <input type="text" id="domainOther" name="domainOther" placeholder="Enter your domain" class="input input-bordered w-full mb-4 hidden" />
+
+      <!-- Year -->
+      <select name="year" class="select select-bordered w-full mb-4" required>
+        <option disabled selected>Select Year</option>
+        <option>1st</option>
+        <option>2nd</option>
+        <option>3rd</option>
+        <option>4th</option>
+      </select>
+
+      <!-- Specialization (visible only for B.Tech + CSE) -->
+      <div id="specializationSection" class="mb-6 hidden">
+        <label class="block font-semibold mb-2">Choose Your Specializations:</label>
+        <div class="grid grid-cols-2 gap-2 mb-2">
+          <label><input type="checkbox" name="specializations" value="AI/ML" class="checkbox checkbox-sm" /> AI/ML</label>
+          <label><input type="checkbox" name="specializations" value="Web Development" class="checkbox checkbox-sm" /> Web Development</label>
+          <label><input type="checkbox" name="specializations" value="Backend" class="checkbox checkbox-sm" /> Backend</label>
+          <label><input type="checkbox" name="specializations" value="Cybersecurity" class="checkbox checkbox-sm" /> Cybersecurity</label>
+          <label><input type="checkbox" name="specializations" value="Flutter" class="checkbox checkbox-sm" /> Flutter</label>
+          <label><input type="checkbox" id="specOther" value="Other" class="checkbox checkbox-sm" /> Other</label>
+        </div>
+        <textarea id="specOtherText" name="specOtherText" class="textarea textarea-bordered w-full hidden" placeholder="Enter your specialization"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-full">Generate Roadmap</button>
+    </form>
+
+    <div id="loader" class="text-center mt-6 hidden">
+      <span class="loading loading-spinner loading-lg"></span>
+      <p>Generating roadmap...</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <script>
+    const form = document.getElementById("roadmapForm");
+    const loader = document.getElementById("loader");
+
+    const collegeSelect = document.getElementById("collegeSelect");
+    const collegeOther = document.getElementById("collegeOther");
+    collegeSelect.addEventListener("change", () => {
+      collegeOther.classList.toggle("hidden", collegeSelect.value !== "Other");
+    });
+
+    const degreeSelect = document.getElementById("degreeSelect");
+    const degreeOther = document.getElementById("degreeOther");
+    degreeSelect.addEventListener("change", () => {
+      degreeOther.classList.toggle("hidden", degreeSelect.value !== "Other");
+      toggleSpecializations();
+    });
+
+    const domainSelect = document.getElementById("domainSelect");
+    const domainOther = document.getElementById("domainOther");
+    domainSelect.addEventListener("change", () => {
+      domainOther.classList.toggle("hidden", domainSelect.value !== "Other");
+      toggleSpecializations();
+    });
+
+    const specOther = document.getElementById("specOther");
+    const specOtherText = document.getElementById("specOtherText");
+    specOther.addEventListener("change", () => {
+      specOtherText.classList.toggle("hidden", !specOther.checked);
+    });
+
+    function toggleSpecializations() {
+      const degree = degreeSelect.value;
+      const domain = domainSelect.value;
+      const section = document.getElementById("specializationSection");
+      section.classList.toggle("hidden", !(degree === "B.Tech" && domain === "CSE"));
+    }
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      loader.classList.remove("hidden");
+
+      const formData = new FormData(form);
+
+      // Override fields if "Other" selected
+      if (collegeSelect.value === "Other") {
+        formData.set("college", collegeOther.value);
+      }
+      if (degreeSelect.value === "Other") {
+        formData.set("degree", degreeOther.value);
+      }
+      if (domainSelect.value === "Other") {
+        formData.set("domain", domainOther.value);
+      }
+
+      const specializations = [];
+      form.querySelectorAll("input[name='specializations']:checked").forEach((cb) => {
+        specializations.push(cb.value);
+      });
+      if (specOther.checked && specOtherText.value) {
+        specializations.push(specOtherText.value.trim());
+      }
+      formData.set("specializations", specializations.join(", "));
+
+      try {
+        const res = await axios.post("/generate", formData);
+        loader.classList.add("hidden");
+        if (res.data.success) {
+          localStorage.setItem("roadmap", res.data.roadmap);
+          window.location.href = "/result";
+        } else {
+          Toastify({ text: res.data.error, backgroundColor: "red" }).showToast();
+        }
+      } catch (err) {
+        loader.classList.add("hidden");
+        Toastify({ text: "Server error!", backgroundColor: "red" }).showToast();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Roadmap</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.7/dist/full.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <style>
+    .prose table {
+      margin-bottom: 2rem;
+      border-collapse: collapse;
+    }
+
+    .prose table th,
+    .prose table td {
+      border: 1px solid #999;
+      padding: 8px 12px;
+    }
+
+    .prose table th {
+      background-color: rgba(0,0,0,0.05);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .prose table th {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  </style>
+</head>
+<body class="bg-base-200 text-base-content min-h-screen p-6">
+
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Your Personalized Career Roadmap</h1>
+      <label class="swap swap-rotate scale-125">
+        <input type="checkbox" class="theme-controller" value="light" />
+        <svg class="swap-on fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M5.64 17.657l1.414 1.415L12 14.828l4.95 4.95 1.414-1.415-4.95-4.95 4.95-4.95-1.414-1.414L12 11.586 7.05 6.636 5.636 8.05l4.95 4.95-4.95 4.95z"/>
+        </svg>
+        <svg class="swap-off fill-current w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M12 3v2a7 7 0 010 14v2a9 9 0 000-18z"/>
+        </svg>
+      </label>
+    </div>
+
+    <div id="roadmap" class="prose max-w-none bg-base-100 p-6 rounded-xl shadow-lg"></div>
+
+    <div class="text-center mt-6">
+      <a href="/" class="btn btn-primary">Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    const roadmapContent = localStorage.getItem("roadmap");
+    document.getElementById("roadmap").innerHTML = roadmapContent;
+  </script>
+</body>
+</html>
